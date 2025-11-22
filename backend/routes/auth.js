@@ -19,7 +19,7 @@ const isValidPassword = (password) =>
 // ---------------------------
 // REGISTER USER
 // ---------------------------
-router.post("/register", async (req, res) => {
+router.post("/api/auth/register", async (req, res) => {
   try {
     const { username, email, password, role } = req.body;
 
@@ -75,7 +75,7 @@ router.post("/register", async (req, res) => {
 // ---------------------------
 // LOGIN USER
 // ---------------------------
-router.post("/login", async (req, res) => {
+router.post("/api/auth/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -141,7 +141,7 @@ router.post("/login", async (req, res) => {
 // ---------------------------
 // REFRESH TOKEN
 // ---------------------------
-router.post("/token", async (req, res) => {
+router.post("/api/auth/token", async (req, res) => {
   const { refreshToken } = req.body;
 
   if (!refreshToken)
@@ -169,7 +169,7 @@ router.post("/token", async (req, res) => {
 // ---------------------------
 // LOGOUT USER
 // ---------------------------
-router.post("/logout", async (req, res) => {
+router.post("/api/auth/logout", async (req, res) => {
   const { refreshToken } = req.body;
 
   if (!refreshToken)

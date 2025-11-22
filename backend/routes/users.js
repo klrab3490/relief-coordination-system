@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 // -----------------------------
 // GET USER PROFILE BY ID
 // -----------------------------
-router.get("/profile/:id", verifyToken, async (req, res) => {
+router.get("/api/users/profile/:id", verifyToken, async (req, res) => {
   try {
     const userId = req.params.id;
 
@@ -30,7 +30,7 @@ router.get("/profile/:id", verifyToken, async (req, res) => {
 // -----------------------------
 // UPDATE USER LOCATION
 // -----------------------------
-router.patch("/location/:id", verifyToken, async (req, res) => {
+router.patch("/api/users/location/:id", verifyToken, async (req, res) => {
   try {
     const userId = req.params.id;
     const { lng, lat } = req.body;
@@ -73,7 +73,7 @@ router.patch("/location/:id", verifyToken, async (req, res) => {
 // -----------------------------
 // DELETE USER BY ID (ADMIN ONLY)
 // -----------------------------
-router.delete("/:id", verifyToken, authorize("admin"), async (req, res) => {
+router.delete("/api/users/:id", verifyToken, authorize("admin"), async (req, res) => {
   try {
     const userId = req.params.id;
 
@@ -100,7 +100,7 @@ router.delete("/:id", verifyToken, authorize("admin"), async (req, res) => {
 // -----------------------------
 // GET ALL USERS (ADMIN ONLY)
 // -----------------------------
-router.get("/", verifyToken, authorize("admin"), async (req, res) => {
+router.get("/api/users", verifyToken, authorize("admin"), async (req, res) => {
   try {
     const users = await User.find().select("-password");
     res.status(200).json(users);

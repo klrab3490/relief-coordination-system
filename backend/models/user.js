@@ -33,8 +33,6 @@ const UserSchema = new Schema(
       enum: ["user", "volunteer", "admin"],
       default: "user",
     },
-
-    // Add this: location for reports + volunteer search
     location: {
       type: {
         type: String,
@@ -42,21 +40,18 @@ const UserSchema = new Schema(
         default: "Point",
       },
       coordinates: {
-        type: [Number], // [lng, lat]
+        type: [Number],
         default: [0, 0],
       },
     },
-
     phone: {
       type: String,
       trim: true,
     },
-
     isVerified: {
       type: Boolean,
       default: false,
     },
-
     skills: {
       type: [String],
       default: [],
@@ -67,7 +62,6 @@ const UserSchema = new Schema(
 
 // Indexes for performance
 UserSchema.index({ username: 1 });
-UserSchema.index({ email: 1 });
 UserSchema.index({ location: "2dsphere" });
 
 module.exports = mongoose.model("User", UserSchema);

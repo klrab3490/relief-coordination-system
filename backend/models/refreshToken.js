@@ -20,7 +20,6 @@ const refreshTokenSchema = new Schema({
 });
 
 // Create indexes for better query performance
-refreshTokenSchema.index({ token: 1 });
 refreshTokenSchema.index({ userId: 1 });
 
 module.exports = mongoose.model("RefreshToken", refreshTokenSchema);

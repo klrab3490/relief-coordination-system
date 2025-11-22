@@ -6,6 +6,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 const rateLimit = require("express-rate-limit");
 
+const listRoutes = require("./utils/listRoutes");
+const authRoute = require("./routes/auth");
+const usersRoute = require("./routes/users");
+// const reportsRoute = require("./routes/report");
+
 // Load environment variables
 dotenv.config();
 if (!process.env.MONGODB_URI) {
@@ -40,15 +45,9 @@ app.use(limiter);
 
 // MongoDB Connection
 mongoose
-  .connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("✅ DB Connected"))
-  .catch((err) => {
-    console.error("❌ DB Connection Error:", err);
-    process.exit(1);
-  });
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch((err) => console.error("❌ DB Connection Error:", err));
 
 // Health Check Endpoint
 app.get("/health", (req, res) => {
@@ -56,6 +55,83 @@ app.get("/health", (req, res) => {
 });
 
 // Routes
+app.use(authRoute);
+app.use(usersRoute);
+// app.use(reportsRoute);
+
+// Homepage to list all routes
+app.get("/", (req, res) => {
+  const routes = listRoutes(app);
+
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>API Routes</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          padding: 20px;
+          background: #f3f4f6;
+        }
+        h1 {
+          margin-bottom: 20px;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          background: white;
+          border-radius: 6px;
+          overflow: hidden;
+        }
+        th, td {
+          padding: 10px;
+          border-bottom: 1px solid #ddd;
+        }
+        th {
+          background: #111827;
+          color: white;
+          text-align: left;
+        }
+        tr:hover {
+          background: #f9fafb;
+        }
+        .count {
+          margin-bottom: 15px;
+          font-weight: bold;
+        }
+      </style>
+
+      <!-- Auto-refresh -->
+      <script>
+        setInterval(() => {
+          window.location.reload();
+        }, 5000);
+      </script>
+    </head>
+    <body>
+      <h1>Registered API Routes</h1>
+      <div class="count">Total Routes: ${routes.length}</div>
+      <table>
+        <tr>
+          <th>Method(s)</th>
+          <th>Path</th>
+        </tr>
+        ${routes
+          .map(
+            (r) => `
+          <tr>
+            <td>${r.methods}</td>
+            <td>${r.path}</td>
+          </tr>
+        `
+          )
+          .join("")}
+      </table>
+    </body>
+    </html>
+  `);
+});
 
 
 // Start Server
