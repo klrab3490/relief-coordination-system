@@ -82,6 +82,8 @@ body {
 .route-card,
 .card,
 .api-card {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     background: var(--card-soft);
     border-radius: var(--radius-lg);
     padding: 16px 18px;
@@ -176,10 +178,17 @@ body {
     color: #b91c1c;
 }
 
+.method-title {
+    grid-column: span 2;
+    margin-bottom: 10px;
+}
+
 /* Actions row */
 .actions {
+    grid-column: span 2;
     margin-top: 10px;
     display: flex;
+    justify-content: end;
     gap: 8px;
     align-items: center;
 }

@@ -127,7 +127,7 @@ function renderRoutes(data) {
         card.style.borderLeftColor = info.fallback.color;
 
         const badgeWrap = document.createElement("div");
-        badgeWrap.className = "mb-2";
+        badgeWrap.className = "method-title";
         methods.forEach((m) => badgeWrap.appendChild(createMethodBadge((m || "GET").toUpperCase())));
 
         const methodLabel = document.createElement("div");
