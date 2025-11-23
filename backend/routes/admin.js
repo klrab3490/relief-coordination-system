@@ -11,7 +11,7 @@ const { verifyToken, authorize } = require("../middleware/auth");
 router.get("/admin/users", verifyToken, authorize("admin"), async (req, res) => {
   try {
     const users = await User.find().select("-password");
-    res.status(200).json({ success: true, users });
+    res.status(200).json({ success: true, users, message: "Users fetched successfully" });
   } catch (error) {
     res.status(500).json({ success: false, message: "Internal server error" });
   }

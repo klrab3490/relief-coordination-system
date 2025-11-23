@@ -48,10 +48,6 @@ const ReportSchema = new Schema(
                 }
             }   
         },
-        createdAt: {
-            type: Date,
-            default: Date.now
-        },
         reportedBy: {
             type: Schema.Types.ObjectId,
             ref: 'User',
@@ -61,6 +57,14 @@ const ReportSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: 'User',
             default: null
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now
+        },
+        updatedAt: {
+            type: Date,
+            default: Date.now
         }
     },
     { timestamps: true }

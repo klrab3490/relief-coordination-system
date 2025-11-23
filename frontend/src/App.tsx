@@ -1,10 +1,13 @@
-import { ThemeProvider } from './components/theme/theme-provider'
+
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
   return (
-    <ThemeProvider>
-      <></>
-    </ThemeProvider>
+    <Router>
+      <Routes>
+        <Route path="*" element={<div>Welcome to the Relief Coordination System</div>} />
+      </Routes>
+    </Router>
   )
 }
 

@@ -160,7 +160,10 @@ router.post("/auth/token", async (req, res) => {
       { expiresIn: "15m" }
     );
 
-    res.status(200).json({ accessToken: newAccessToken });
+    res.status(200).json({ 
+      message: "Access token refreshed successfully.",
+      accessToken: newAccessToken
+     });
   } catch (error) {
     res.status(403).json({ message: "Invalid or expired refresh token." });
   }
