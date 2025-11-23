@@ -8,21 +8,29 @@ module.exports = function listRoutes(app) {
 
   if (!root) return routes;
 
+  function classifyRoute(path) {
+    if (path.startsWith("/api/auth")) return "Auth Route";
+    if (path.startsWith("/api/users")) return "User Route";
+    if (path.startsWith("/api/reports")) return "Report Route";
+    return "Basic";
+  }
+
   function walk(stack, prefix = "") {
     stack.forEach((layer) => {
-      // If this is a direct route
       if (layer.route) {
         const methods = Object.keys(layer.route.methods)
           .map((m) => m.toUpperCase())
           .join(", ");
 
+        const fullPath = prefix + layer.route.path;
+
         routes.push({
-          path: prefix + layer.route.path,
+          path: fullPath,
           methods,
+          type: classifyRoute(fullPath),
         });
       }
 
-      // If this is a nested router
       const sub = layer.handle?.stack || layer.handler?.stack;
       if (sub) walk(sub, prefix);
     });

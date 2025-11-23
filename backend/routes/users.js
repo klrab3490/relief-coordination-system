@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
 const User = require("../models/user");
 const { verifyToken, authorize } = require("../middleware/auth");
-const mongoose = require("mongoose");
 
 // -----------------------------
 // GET USER PROFILE BY ID

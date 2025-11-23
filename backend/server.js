@@ -9,7 +9,7 @@ const rateLimit = require("express-rate-limit");
 const listRoutes = require("./utils/listRoutes");
 const authRoute = require("./routes/auth");
 const usersRoute = require("./routes/users");
-// const reportsRoute = require("./routes/report");
+const reportsRoute = require("./routes/reports");
 
 // Load environment variables
 dotenv.config();
@@ -57,11 +57,29 @@ app.get("/health", (req, res) => {
 // Routes
 app.use(authRoute);
 app.use(usersRoute);
-// app.use(reportsRoute);
+app.use(reportsRoute);
 
 // Homepage to list all routes
 app.get("/", (req, res) => {
   const routes = listRoutes(app);
+
+  // Group by type
+  const groups = {
+    "Basic": [],
+    "Auth Route": [],
+    "User Route": [],
+    "Report Route": [],
+  };
+
+  routes.forEach((r) => {
+    if (!groups[r.type]) groups["Basic"].push(r);
+    else groups[r.type].push(r);
+  });
+
+  // Sort each group by path
+  Object.keys(groups).forEach((key) => {
+    groups[key].sort((a, b) => a.path.localeCompare(b.path));
+  });
 
   res.send(`
     <!DOCTYPE html>
@@ -77,12 +95,18 @@ app.get("/", (req, res) => {
         h1 {
           margin-bottom: 20px;
         }
+        h2 {
+          margin-top: 40px;
+          margin-bottom: 10px;
+          color: #111827;
+        }
         table {
           width: 100%;
           border-collapse: collapse;
           background: white;
           border-radius: 6px;
           overflow: hidden;
+          margin-bottom: 20px;
         }
         th, td {
           padding: 10px;
@@ -102,7 +126,6 @@ app.get("/", (req, res) => {
         }
       </style>
 
-      <!-- Auto-refresh -->
       <script>
         setInterval(() => {
           window.location.reload();
@@ -112,27 +135,38 @@ app.get("/", (req, res) => {
     <body>
       <h1>Registered API Routes</h1>
       <div class="count">Total Routes: ${routes.length}</div>
-      <table>
-        <tr>
-          <th>Method(s)</th>
-          <th>Path</th>
-        </tr>
-        ${routes
-          .map(
-            (r) => `
-          <tr>
-            <td>${r.methods}</td>
-            <td>${r.path}</td>
-          </tr>
-        `
-          )
-          .join("")}
-      </table>
+
+      ${Object.keys(groups)
+        .map((type) => {
+          const group = groups[type];
+          if (group.length === 0) return "";
+
+          return `
+            <h2>${type} (${group.length})</h2>
+            <table>
+              <tr>
+                <th>Method(s)</th>
+                <th>Path</th>
+              </tr>
+              ${group
+                .map(
+                  (r) => `
+                  <tr>
+                    <td>${r.methods}</td>
+                    <td>${r.path}</td>
+                  </tr>
+                `
+                )
+                .join("")}
+            </table>
+          `;
+        })
+        .join("")}
+
     </body>
     </html>
   `);
 });
-
 
 // Start Server
 app.listen(PORT, () => {
