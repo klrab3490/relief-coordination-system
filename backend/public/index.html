@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>API Routes Explorer</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <!-- Tailwind (utility layer) -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+        <!-- Custom design layer -->
+        <link rel="stylesheet" href="/css/styles.css" />
+    </head>
+
+    <body class="bg-slate-950 text-slate-100 min-h-screen theme-dark">
+        <div class="min-h-screen flex">
+            <!-- Sidebar -->
+            <aside
+                class="hidden md:flex md:flex-col border-r border-slate-800 bg-slate-950 px-6 py-6 space-y-6 sidebar">
+                <div class="flex items-center gap-2">
+                    <div
+                        class="h-9 w-9 rounded-xl bg-linear-to-br from-blue-500 via-cyan-400 to-emerald-400 flex items-center justify-center text-xl font-black tracking-tight">
+                        API
+                    </div>
+                    <div>
+                        <div
+                            class="text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
+                            Dashboard
+                        </div>
+                        <div class="text-lg font-bold text-slate-50">
+                            Route Explorer
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 text-sm">
+                    <div>
+                        <div
+                            class="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">
+                            Overview
+                        </div>
+                        <div
+                            class="rounded-2xl bg-slate-900/70 border border-slate-800 px-4 py-3 space-y-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-400 text-xs">Total
+                                    Routes</span>
+                                <span
+                                    id="count"
+                                    class="inline-flex items-center justify-center rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-semibold text-slate-100">
+                                    0
+                                </span>
+                            </div>
+                            <p class="text-[11px] text-slate-500">
+                                Live view of all registered routes grouped by
+                                responsibility.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div
+                            class="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">
+                            Method legend
+                        </div>
+                        <div class="space-y-2">
+                            <div
+                                class="flex items-center justify-between text-xs">
+                                <span class="pill pill-get">GET</span>
+                                <span class="text-slate-500">Read</span>
+                            </div>
+                            <div
+                                class="flex items-center justify-between text-xs">
+                                <span class="pill pill-post">POST</span>
+                                <span class="text-slate-500">Create</span>
+                            </div>
+                            <div
+                                class="flex items-center justify-between text-xs">
+                                <span class="pill pill-put">PUT</span>
+                                <span class="text-slate-500">Replace</span>
+                            </div>
+                            <div
+                                class="flex items-center justify-between text-xs">
+                                <span class="pill pill-patch">PATCH</span>
+                                <span class="text-slate-500">Update</span>
+                            </div>
+                            <div
+                                class="flex items-center justify-between text-xs">
+                                <span class="pill pill-delete">DELETE</span>
+                                <span class="text-slate-500">Remove</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto text-[11px] text-slate-500">
+                        Auto-refreshing every 5 seconds.
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main content -->
+            <main class="flex-1 px-4 md:px-8 py-6 md:py-8">
+                <!-- Top bar -->
+                <header
+                    class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 md:mb-8">
+                    <div>
+                        <h1
+                            class="text-2xl md:text-3xl font-bold tracking-tight text-slate-50">
+                            Registered API Routes
+                        </h1>
+                        <p class="text-sm text-slate-400 mt-1">
+                            Search, filter and inspect your Express routes in a
+                            single dashboard.
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <button
+                            id="collapseAll"
+                            class="hidden md:inline-flex items-center gap-1 text-xs font-medium rounded-full border border-slate-700 bg-slate-900/70 px-3 py-1.5 hover:bg-slate-800 transition">
+                            Collapse all
+                        </button>
+                        <button
+                            id="expandAll"
+                            class="hidden md:inline-flex items-center gap-1 text-xs font-medium rounded-full border border-slate-700 bg-slate-900/70 px-3 py-1.5 hover:bg-slate-800 transition">
+                            Expand all
+                        </button>
+                    </div>
+                </header>
+
+                <!-- Filters -->
+                <section
+                    class="filters-sticky mb-4 md:mb-6 rounded-2xl border border-slate-800 bg-slate-950/85 backdrop-blur-xl px-4 py-3">
+                    <div
+                        class="flex gap-3 md:items-center">
+                        <div class="flex items-center gap-2">
+                            <div
+                                class="hidden md:block text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+                                Filter
+                            </div>
+                            <input
+                                id="search"
+                                type="text"
+                                placeholder="Search routes by path or method…"
+                                class="w-full md:flex-1 px-3 py-2.5 rounded-xl border border-slate-700 bg-slate-900/80 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500/60" />
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <select
+                                id="methodFilter"
+                                class="px-3 py-2.5 rounded-xl border border-slate-700 bg-slate-900/80 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/60">
+                                <option value>All Methods</option>
+                                <option>GET</option>
+                                <option>POST</option>
+                                <option>PUT</option>
+                                <option>PATCH</option>
+                                <option>DELETE</option>
+                            </select>
+
+                            <button
+                                id="clearFilters"
+                                class="px-3 py-2.5 rounded-xl border border-slate-700 bg-slate-900/80 text-xs font-medium text-slate-300 hover:bg-slate-800 transition">
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Routes container -->
+                <section
+                    id="routes"
+                    class="routes-container text-sm text-slate-100">
+                    <!-- Filled by routes.js -->
+                </section>
+            </main>
+        </div>
+
+        <script src="/js/routes.js" defer></script>
+    </body>
+</html>

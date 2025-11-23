@@ -1,0 +1,262 @@
+/* --- Theme tokens --- */
+:root {
+    --bg: #020617;
+    --card: #020617;
+    --card-soft: rgba(15, 23, 42, 0.96);
+    --muted: #9ca3af;
+    --text: #e5e7eb;
+    --border-subtle: rgba(51, 65, 85, 0.9);
+    --accent: #3b82f6;
+    --accent-soft: rgba(59, 130, 246, 0.16);
+    --radius-lg: 16px;
+    --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.9);
+}
+
+/* Light mode override */
+body:not(.theme-dark) {
+    --bg: #f3f4f6;
+    --card: #ffffff;
+    --card-soft: rgba(255, 255, 255, 0.98);
+    --text: #111827;
+    --muted: #6b7280;
+    --border-subtle: rgba(209, 213, 219, 0.9);
+    --accent: #2563eb;
+    --accent-soft: rgba(37, 99, 235, 0.12);
+    --shadow-soft: 0 12px 28px rgba(15, 23, 42, 0.18);
+}
+
+/* Base typography */
+html,
+body {
+    height: 100%;
+    padding: 20px;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    /* Softer radial glow instead of hard band */
+    background:
+        radial-gradient(circle at top left, #0b1120 0, #020617 55%);
+    color: var(--text);
+}
+
+/* Fallback when Tailwind isn’t loaded */
+.text-lg {
+    font-size: 1.125rem;
+}
+
+/* Sidebar */
+.sidebar {
+    box-shadow: 1px 0 0 rgba(15, 23, 42, 0.9);
+    background: #020617;
+}
+
+/* Sticky filter bar */
+.filters-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+}
+
+/* Grid for route cards */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 16px;
+}
+
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* Route cards – dark, with colored left rail */
+.route-card,
+.card,
+.api-card {
+    background: var(--card-soft);
+    border-radius: var(--radius-lg);
+    padding: 16px 18px;
+    border: 1px solid var(--border-subtle);
+    border-left-width: 4px;
+    /* method color set from JS */
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        border-color 0.18s ease,
+        background-color 0.18s ease;
+}
+
+.route-card:hover,
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 22px 60px rgba(15, 23, 42, 0.95);
+    border-color: var(--accent);
+}
+
+/* Text helpers */
+.muted {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.method-names {
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 13px;
+}
+
+.path,
+.font-mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+    color: #38bdf8;
+    word-break: break-word;
+    font-size: 13px;
+}
+
+/* Method badges / pills */
+.badge,
+.method-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-right: 6px;
+}
+
+.pill {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 11px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Legend colours */
+.pill-get {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.pill-post {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.pill-put {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.pill-patch {
+    background: #e0e7ff;
+    color: #3730a3;
+}
+
+.pill-delete {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* Actions row */
+.actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Copy button */
+.copy-btn {
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid var(--border-subtle);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    color: var(--text);
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        transform 0.12s ease,
+        box-shadow 0.15s ease;
+    box-shadow: 0 0 0 rgba(15, 23, 42, 0.5);
+}
+
+.copy-btn:hover {
+    background: var(--accent-soft);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.8);
+}
+
+/* Group sections – slimmer headers, no huge grey bar */
+details {
+    margin-bottom: 24px;
+    padding-top: 8px;
+}
+
+.group-header {
+    cursor: pointer;
+    list-style: none;
+    margin: 0 0 12px 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    background: rgba(15, 23, 42, 0.92);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+}
+
+.group-header::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--accent);
+}
+
+.group-header::after {
+    content: "▾";
+    font-size: 14px;
+    opacity: 0.8;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    margin-left: 4px;
+}
+
+details[open]>.group-header::after {
+    transform: rotate(180deg);
+    opacity: 1;
+}
+
+/* Routes container empty state */
+#routes {
+    margin-top: 4px;
+}
+
+#routes.empty-state {
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    padding: 40px 0;
+}

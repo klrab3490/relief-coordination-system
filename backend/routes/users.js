@@ -7,7 +7,7 @@ const { verifyToken, authorize } = require("../middleware/auth");
 // -----------------------------
 // GET USER PROFILE BY ID
 // -----------------------------
-router.get("/api/users/profile/:id", verifyToken, async (req, res) => {
+router.get("/users/profile/:id", verifyToken, async (req, res) => {
   try {
     const userId = req.params.id;
 
@@ -30,7 +30,7 @@ router.get("/api/users/profile/:id", verifyToken, async (req, res) => {
 // -----------------------------
 // UPDATE USER LOCATION
 // -----------------------------
-router.patch("/api/users/location/:id", verifyToken, async (req, res) => {
+router.patch("/users/location/:id", verifyToken, async (req, res) => {
   try {
     const userId = req.params.id;
     const { lng, lat } = req.body;
@@ -65,45 +65,6 @@ router.patch("/api/users/location/:id", verifyToken, async (req, res) => {
       message: "Location updated successfully.",
       user,
     });
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error." });
-  }
-});
-
-// -----------------------------
-// DELETE USER BY ID (ADMIN ONLY)
-// -----------------------------
-router.delete("/api/users/:id", verifyToken, authorize("admin"), async (req, res) => {
-  try {
-    const userId = req.params.id;
-
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ message: "Invalid user ID." });
-    }
-
-    // Prevent self-deletion
-    if (req.userId === userId) {
-      return res.status(400).json({ message: "Admins cannot delete themselves." });
-    }
-
-    const deleteUser = await User.findByIdAndDelete(userId);
-    if (!deleteUser) {
-      return res.status(404).json({ message: "User not found." });
-    }
-
-    res.status(200).json({ message: "User deleted successfully.", user: { id: deleteUser._id, username: deleteUser.username, email: deleteUser.email, role: deleteUser.role } });
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error." });
-  }
-});
-
-// -----------------------------
-// GET ALL USERS (ADMIN ONLY)
-// -----------------------------
-router.get("/api/users", verifyToken, authorize("admin"), async (req, res) => {
-  try {
-    const users = await User.find().select("-password");
-    res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: "Internal server error." });
   }

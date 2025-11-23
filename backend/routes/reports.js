@@ -7,7 +7,7 @@ const { verifyToken, authorize } = require('../middleware/auth');
 // -----------------------------
 // CREATE A REPORT
 // -----------------------------
-router.post('/api/reports/create', verifyToken, async (req, res) => {
+router.post('/reports/create', verifyToken, async (req, res) => {
     try {
         const { title, description, category, imageUrl, lng, lat } = req.body;
 
@@ -47,7 +47,7 @@ router.post('/api/reports/create', verifyToken, async (req, res) => {
 // -----------------------------
 // GET ALL REPORTS
 // -----------------------------
-router.get('/api/reports', verifyToken, async (req, res) => {
+router.get('/reports', verifyToken, async (req, res) => {
     try {
         const reports = await Report.find()
             .populate('reportedBy', 'username email')
@@ -65,7 +65,7 @@ router.get('/api/reports', verifyToken, async (req, res) => {
 // -----------------------------
 // GET REPORT BY ID
 // -----------------------------
-router.get('/api/reports/:id', verifyToken, async (req, res) => {
+router.get('/reports/:id', verifyToken, async (req, res) => {
     try {
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
             return res.status(400).json({ message: "Invalid report ID." });
@@ -92,7 +92,7 @@ router.get('/api/reports/:id', verifyToken, async (req, res) => {
 // -----------------------------
 // GET REPORT BY ID
 // -----------------------------
-router.get('/api/reports/nearby', verifyToken, async (req, res) => {
+router.get('/reports/nearby', verifyToken, async (req, res) => {
     try {
         const { lng, lat, radius = 5000 } = req.query;
 
@@ -121,7 +121,7 @@ router.get('/api/reports/nearby', verifyToken, async (req, res) => {
 // -----------------------------
 // UPDATE REPORT STATUS (VOLUNTEER/ADMIN)
 // -----------------------------
-router.patch('/api/reports/:id/status', verifyToken, authorize('volunteer', 'admin'), async (req, res) => {
+router.patch('/reports/:id/status', verifyToken, authorize('volunteer', 'admin'), async (req, res) => {
     try {
         const { status } = req.body;
 
@@ -152,7 +152,7 @@ router.patch('/api/reports/:id/status', verifyToken, authorize('volunteer', 'adm
 // -----------------------------
 // ASSIGN REPORT TO VOLUNTEER (VOLUNTEER/ADMIN)
 // -----------------------------
-router.patch('/api/reports/:id/assign', verifyToken, authorize('volunteer', 'admin'), async (req, res) => {
+router.patch('/reports/:id/assign', verifyToken, authorize('volunteer', 'admin'), async (req, res) => {
     try {
         const { volunteerId } = req.body;
 
@@ -178,7 +178,7 @@ router.patch('/api/reports/:id/assign', verifyToken, authorize('volunteer', 'adm
 // -----------------------------
 // DELETE REPORT (ADMIN ONLY)
 // -----------------------------
-router.delete('/api/reports/:id', verifyToken, authorize('admin'), async (req, res) => {
+router.delete('/reports/:id', verifyToken, authorize('admin'), async (req, res) => {
     try {
         await Report.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: "Report deleted successfully." });

@@ -1,4 +1,5 @@
 const cors = require("cors");
+const path = require("path");
 const dotenv = require("dotenv");
 const helmet = require("helmet");
 const morgan = require("morgan");
@@ -8,8 +9,10 @@ const rateLimit = require("express-rate-limit");
 
 const listRoutes = require("./utils/listRoutes");
 const authRoute = require("./routes/auth");
+const adminRoute = require("./routes/admin");
 const usersRoute = require("./routes/users");
 const reportsRoute = require("./routes/reports");
+const volunteerRoute = require("./routes/volunteer");
 
 // Load environment variables
 dotenv.config();
@@ -22,7 +25,9 @@ if (!process.env.PORT) {
   process.exit(1);
 }
 if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
-  console.error("❌ JWT_SECRET or JWT_REFRESH_SECRET is not defined in environment variables");
+  console.error(
+    "❌ JWT_SECRET or JWT_REFRESH_SECRET is not defined in environment variables"
+  );
   process.exit(1);
 }
 
@@ -30,7 +35,23 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(helmet());
+// Configure Helmet with a Content Security Policy that allows local scripts
+// and the Tailwind CDN used in `public/index.html`.
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", 'https://cdn.jsdelivr.net'],
+        styleSrc: ["'self'", 'https://cdn.jsdelivr.net'],
+        imgSrc: ["'self'", 'data:'],
+        connectSrc: ["'self'"],
+        fontSrc: ["'self'", 'https://cdn.jsdelivr.net'],
+        objectSrc: ["'none'"],
+      },
+    },
+  })
+);
 app.use(morgan("combined"));
 app.use(cors());
 app.use(express.json({ limit: "10kb" }));
@@ -55,20 +76,22 @@ app.get("/health", (req, res) => {
 });
 
 // Routes
-app.use(authRoute);
-app.use(usersRoute);
-app.use(reportsRoute);
+app.use("/api", authRoute);
+app.use("/api", adminRoute);
+app.use("/api", usersRoute);
+app.use("/api", reportsRoute);
+app.use("/api", volunteerRoute);
 
-// Homepage to list all routes
-app.get("/", (req, res) => {
+app.get("/list", (req, res) => {
   const routes = listRoutes(app);
 
-  // Group by type
   const groups = {
-    "Basic": [],
+    Basic: [],
     "Auth Route": [],
+    "Admin Route": [],
     "User Route": [],
     "Report Route": [],
+    "Volunteer Route": [],
   };
 
   routes.forEach((r) => {
@@ -76,97 +99,18 @@ app.get("/", (req, res) => {
     else groups[r.type].push(r);
   });
 
-  // Sort each group by path
-  Object.keys(groups).forEach((key) => {
-    groups[key].sort((a, b) => a.path.localeCompare(b.path));
+  Object.keys(groups).forEach((key) =>
+    groups[key].sort((a, b) => a.path.localeCompare(b.path))
+  );
+
+  res.json({
+    total: routes.length,
+    groups,
   });
-
-  res.send(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>API Routes</title>
-      <style>
-        body {
-          font-family: Arial, sans-serif;
-          padding: 20px;
-          background: #f3f4f6;
-        }
-        h1 {
-          margin-bottom: 20px;
-        }
-        h2 {
-          margin-top: 40px;
-          margin-bottom: 10px;
-          color: #111827;
-        }
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          background: white;
-          border-radius: 6px;
-          overflow: hidden;
-          margin-bottom: 20px;
-        }
-        th, td {
-          padding: 10px;
-          border-bottom: 1px solid #ddd;
-        }
-        th {
-          background: #111827;
-          color: white;
-          text-align: left;
-        }
-        tr:hover {
-          background: #f9fafb;
-        }
-        .count {
-          margin-bottom: 15px;
-          font-weight: bold;
-        }
-      </style>
-
-      <script>
-        setInterval(() => {
-          window.location.reload();
-        }, 5000);
-      </script>
-    </head>
-    <body>
-      <h1>Registered API Routes</h1>
-      <div class="count">Total Routes: ${routes.length}</div>
-
-      ${Object.keys(groups)
-        .map((type) => {
-          const group = groups[type];
-          if (group.length === 0) return "";
-
-          return `
-            <h2>${type} (${group.length})</h2>
-            <table>
-              <tr>
-                <th>Method(s)</th>
-                <th>Path</th>
-              </tr>
-              ${group
-                .map(
-                  (r) => `
-                  <tr>
-                    <td>${r.methods}</td>
-                    <td>${r.path}</td>
-                  </tr>
-                `
-                )
-                .join("")}
-            </table>
-          `;
-        })
-        .join("")}
-
-    </body>
-    </html>
-  `);
 });
+
+// NOW static files are served AFTER
+app.use(express.static(path.join(__dirname, "public")));
 
 // Start Server
 app.listen(PORT, () => {
