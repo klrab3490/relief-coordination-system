@@ -26,14 +26,8 @@ body:not(.theme-dark) {
 }
 
 /* Base typography */
-html,
 body {
-    height: 100%;
     padding: 20px;
-}
-
-body {
-    margin: 0;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     /* Softer radial glow instead of hard band */
     background:
