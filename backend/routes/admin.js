@@ -23,9 +23,6 @@ router.get("/admin/users", verifyToken, authorize("admin"), async (req, res) => 
 router.get("/admin/reports", verifyToken, authorize("admin"), async (req, res) => {
   try {
     const reports = await Report.find()
-      .populate("createdBy", "username email")
-      .populate("assignedTo", "username role");
-
     res.status(200).json({ success: true, reports });
   } catch (error) {
     res.status(500).json({ success: false, message: "Internal server error" });
@@ -41,6 +38,12 @@ router.delete("/admin/user/:id", verifyToken, authorize("admin"), async (req, re
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ success: false, message: "Invalid user ID" });
+    }
+
+    // prevent admin from deleting their own account
+    const currentUserId = req.user && (req.user.id || req.user._id);
+    if (currentUserId && currentUserId.toString() === userId.toString()) {
+      return res.status(400).json({ success: false, message: "Cannot delete your own account" });
     }
 
     await User.findByIdAndDelete(userId);

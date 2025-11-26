@@ -1,12 +1,12 @@
 import { Navigate } from 'react-router-dom';
-import { useAPI } from '@/contexts/APIContext';
+import { useApi } from '@/context/APIContext';
 
 interface Props {
   children: React.ReactNode;
 }
 
 export const ProtectedRoute = ({ children }: Props) => {
-  const { user, accessToken } = useAPI();
+  const { user, accessToken } = useApi();
 
   if (!user || !accessToken) {
     return <Navigate to="/login" replace />;
