@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useApi } from "@/context/APIContext";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/custom/Navbar";
+import { MapPicker } from "@/components/custom/MapPicker";
+import { ImageUploader } from "@/components/custom/ImageUploader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,17 +21,34 @@ const ReportCreate = () => {
     const [category, setCategory] = useState("fire");
     const [lng, setLng] = useState<number | "">("");
     const [lat, setLat] = useState<number | "">("");
+    const [imageUrl, setImageUrl] = useState("");
+    const [selectedAddress, setSelectedAddress] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
+    const handleLocationSelect = (longitude: number, latitude: number, address?: string) => {
+        setLng(longitude);
+        setLat(latitude);
+        setSelectedAddress(address || "");
+    };
+
+    const handleImageUploaded = (url: string) => {
+        setImageUrl(url);
+    };
+
     const handleSubmit = async () => {
         if (!lng || !lat) {
-            setError("Location is required");
+            setError("Please select a location on the map");
             return;
         }
 
         if (!title.trim()) {
             setError("Title is required");
+            return;
+        }
+
+        if (!description.trim()) {
+            setError("Description is required");
             return;
         }
 
@@ -43,6 +62,7 @@ const ReportCreate = () => {
                 category,
                 lng: Number(lng),
                 lat: Number(lat),
+                imageUrl,
             });
 
             navigate("/reports");
@@ -113,31 +133,21 @@ const ReportCreate = () => {
                             </Select>
                         </div>
 
-                        <div className="grid md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="lng">Longitude *</Label>
-                                <Input
-                                    id="lng"
-                                    type="number"
-                                    step="any"
-                                    placeholder="e.g., -74.006"
-                                    value={lng}
-                                    onChange={(e) => setLng(e.target.value ? Number(e.target.value) : "")}
-                                    disabled={loading}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="lat">Latitude *</Label>
-                                <Input
-                                    id="lat"
-                                    type="number"
-                                    step="any"
-                                    placeholder="e.g., 40.7128"
-                                    value={lat}
-                                    onChange={(e) => setLat(e.target.value ? Number(e.target.value) : "")}
-                                    disabled={loading}
-                                />
-                            </div>
+                        <div className="space-y-2">
+                            <Label>Upload Image (Optional)</Label>
+                            <ImageUploader
+                                onImageUploaded={handleImageUploaded}
+                                currentImageUrl={imageUrl}
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Select Location on Map *</Label>
+                            <MapPicker
+                                onLocationSelect={handleLocationSelect}
+                                initialLng={lng ? Number(lng) : undefined}
+                                initialLat={lat ? Number(lat) : undefined}
+                            />
                         </div>
 
                         <div className="flex space-x-4 pt-4">

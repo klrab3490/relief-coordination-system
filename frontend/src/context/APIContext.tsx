@@ -49,6 +49,9 @@ interface ApiContextType {
     getProfile: (id: string) => Promise<ApiResponse>;
     updateLocation: (id: string, lng: number, lat: number) => Promise<ApiResponse>;
 
+    // Upload
+    uploadImage: (file: File) => Promise<ApiResponse>;
+
     // Reports
     createReport: (data: CreateReportData) => Promise<ApiResponse>;
     getAllReports: () => Promise<ApiResponse>;
@@ -198,6 +201,68 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         safeFetch("PATCH", `/api/users/location/${id}`, { lng, lat });
 
     // -----------------------------
+    // UPLOAD
+    // -----------------------------
+    const uploadImage = async (file: File): Promise<ApiResponse> => {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        try {
+            const res = await fetch(`${BASE_URL}/api/upload/image`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                body: formData,
+            });
+
+            const json = await res.json().catch(() => null);
+
+            if (!res.ok) {
+                throw new Error((json && json.message) || "Image upload failed");
+            }
+
+            return json;
+        } catch (err) {
+            const error = err as Error;
+            const isAuthError =
+                error.message.includes("expired") ||
+                error.message.includes("Invalid token") ||
+                error.message.includes("Unauthorized");
+
+            if (isAuthError && refreshToken) {
+                // Refresh token and retry
+                const data = await http("POST", `${BASE_URL}/api/auth/token`, undefined, {
+                    refreshToken,
+                });
+
+                const newToken = data.accessToken as string;
+                setAccessToken(newToken);
+                localStorage.setItem("accessToken", newToken);
+
+                // Retry upload with new token
+                const retryRes = await fetch(`${BASE_URL}/api/upload/image`, {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${newToken}`,
+                    },
+                    body: formData,
+                });
+
+                const retryJson = await retryRes.json().catch(() => null);
+
+                if (!retryRes.ok) {
+                    throw new Error((retryJson && retryJson.message) || "Image upload failed");
+                }
+
+                return retryJson;
+            }
+
+            throw err;
+        }
+    };
+
+    // -----------------------------
     // REPORTS
     // -----------------------------
     const createReport = (data: CreateReportData) => safeFetch("POST", `/api/reports/create`, data);
@@ -250,6 +315,9 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         // User
         getProfile,
         updateLocation,
+
+        // Upload
+        uploadImage,
 
         // Reports
         createReport,

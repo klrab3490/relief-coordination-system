@@ -8,9 +8,9 @@ interface Props {
 export const VolunteerRoute = ({ children }: Props) => {
   const { user } = useApi();
 
-  if (!user || user.role !== 'volunteer') {
+  if (!user || (user.role !== 'volunteer' && user.role !== 'admin')) {
     return <Navigate to="/" replace />;
   }
-  
+
   return children;
 }

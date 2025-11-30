@@ -53,8 +53,37 @@ router.get('/reports', verifyToken, async (req, res) => {
             .populate('reportedBy', 'username email')
             .populate('assignedTo', 'username email')
             .sort({ createdAt: -1 });
-        res.status(200).json({ 
+        res.status(200).json({
             message: "Reports fetched successfully.",
+            reports
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error." });
+    }
+});
+
+// -----------------------------
+// GET NEARBY REPORTS (Must be before /:id route)
+// -----------------------------
+router.get('/reports/nearby', verifyToken, async (req, res) => {
+    try {
+        const { lng, lat, radius = 5000 } = req.query;
+
+        if (!lng || !lat || !radius) {
+            return res.status(400).json({ message: "Missing required query parameters." });
+        }
+
+        const reports = await Report.find({
+            location: {
+                $near: {
+                    $geometry: { type: "Point", coordinates: [ parseFloat(lng), parseFloat(lat) ] },
+                    $maxDistance: parseInt(radius)
+                }
+            }
+        });
+
+        res.status(200).json({
+            message: "Nearby reports fetched successfully.",
             reports
         });
     } catch (error) {
@@ -80,38 +109,9 @@ router.get('/reports/:id', verifyToken, async (req, res) => {
             return res.status(404).json({ message: "Report not found." });
         }
 
-        res.status(200).json({ 
+        res.status(200).json({
             message: "Report fetched successfully.",
             report
-        });
-    } catch (error) {
-        res.status(500).json({ message: "Internal server error." });
-    }
-});
-
-// -----------------------------
-// GET REPORT BY ID
-// -----------------------------
-router.get('/reports/nearby', verifyToken, async (req, res) => {
-    try {
-        const { lng, lat, radius = 5000 } = req.query;
-
-        if (!lng || !lat || !radius) {
-            return res.status(400).json({ message: "Missing required query parameters." });
-        }
-
-        const reports = await Report.find({
-            location: {
-                $near: {
-                    $geometry: { type: "Point", coordinates: [ parseFloat(lng), parseFloat(lat) ] },
-                    $maxDistance: parseInt(radius)
-                }
-            }
-        });
-
-        res.status(200).json({
-            message: "Nearby reports fetched successfully.",
-            reports
         });
     } catch (error) {
         res.status(500).json({ message: "Internal server error." });

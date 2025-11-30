@@ -20,6 +20,7 @@ import CreateReport from "@/pages/user/CreateReport";
 // Common Pages
 import ReportList from "@/pages/common/ReportsList";
 import ReportView from "@/pages/common/ReportView";
+import Chat from "@/pages/common/Chat";
 
 export const AppRouter = () => {
     return (
@@ -48,6 +49,11 @@ export const AppRouter = () => {
                 <Route path="/reports/view/:id" element={
                     <ProtectedRoute>
                         <ReportView />
+                    </ProtectedRoute>
+                } />
+                <Route path="/chat" element={
+                    <ProtectedRoute>
+                        <Chat />
                     </ProtectedRoute>
                 } />
 
