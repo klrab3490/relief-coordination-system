@@ -14,6 +14,7 @@ router.post('/reports/create', verifyToken, async (req, res) => {
         if (!title || !description || !category || lng === undefined || lat === undefined) {
             return res.status(400).json({ message: "Missing or invalid required fields." });
         }
+        console.log("User ID from token:", req.user.id);
 
         const report = await Report.create({
             title,
@@ -22,10 +23,11 @@ router.post('/reports/create', verifyToken, async (req, res) => {
             imageUrl,
             location: {
                 type: "Point",
-                coordinates: [lng, lat]
+                coordinates: [parseFloat(lng), parseFloat(lat)]
             },
             reportedBy: req.user.id
         })
+        console.log("Created Report:", report);
         res.status(201).json({
             message: "Report created successfully.",
             report: {
@@ -40,7 +42,9 @@ router.post('/reports/create', verifyToken, async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ message: "Internal server error." });
+        console.error("CREATE REPORT ERROR ↓↓↓");
+        console.error(error);
+        res.status(500).json({ message: error.message });
     }
 });
 
@@ -76,7 +80,7 @@ router.get('/reports/nearby', verifyToken, async (req, res) => {
         const reports = await Report.find({
             location: {
                 $near: {
-                    $geometry: { type: "Point", coordinates: [ parseFloat(lng), parseFloat(lat) ] },
+                    $geometry: { type: "Point", coordinates: [parseFloat(lng), parseFloat(lat)] },
                     $maxDistance: parseInt(radius)
                 }
             }
@@ -183,7 +187,7 @@ router.delete('/reports/:id', verifyToken, authorize('admin'), async (req, res) 
         await Report.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: "Report deleted successfully." });
     } catch (error) {
-       res.status(500).json({ message: "Internal server error." }); 
+        res.status(500).json({ message: "Internal server error." });
     }
 });
 
