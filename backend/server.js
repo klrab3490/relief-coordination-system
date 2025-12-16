@@ -65,7 +65,12 @@ app.use(
         scriptSrc: ["'self'", 'https://cdn.jsdelivr.net'],
         styleSrc: ["'self'", 'https://cdn.jsdelivr.net'],
         imgSrc: ["'self'", 'data:'],
-        connectSrc: ["'self'"],
+        connectSrc: [
+          "'self'",
+          "http://localhost:3000",
+          "http://localhost:5173",
+          "ws://localhost:3000"
+        ],
         fontSrc: ["'self'", 'https://cdn.jsdelivr.net'],
         objectSrc: ["'none'"],
       },
