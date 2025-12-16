@@ -29,10 +29,12 @@ const DropdownMenu = ({ children }: { children: React.ReactNode }) => {
   )
 }
 
+import { Slot } from "@radix-ui/react-slot"
+
 const DropdownMenuTrigger = React.forwardRef<
   HTMLButtonElement,
   React.ButtonHTMLAttributes<HTMLButtonElement> & { asChild?: boolean }
->(({ children, onClick, ...props }, ref) => {
+>(({ children, onClick, asChild = false, ...props }, ref) => {
   const { isOpen, setIsOpen } = useDropdownMenu()
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -40,8 +42,10 @@ const DropdownMenuTrigger = React.forwardRef<
     onClick?.(e)
   }
 
+  const Comp = asChild ? Slot : "button"
+
   return (
-    <button
+    <Comp
       ref={ref}
       onClick={handleClick}
       aria-expanded={isOpen}
@@ -49,7 +53,7 @@ const DropdownMenuTrigger = React.forwardRef<
       {...props}
     >
       {children}
-    </button>
+    </Comp>
   )
 })
 DropdownMenuTrigger.displayName = "DropdownMenuTrigger"
@@ -100,7 +104,7 @@ const DropdownMenuContent = React.forwardRef<
     <div
       ref={contentRef}
       className={cn(
-        "absolute top-full mt-2 z-50 min-w-[12rem] overflow-hidden rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-1 shadow-lg animate-fade-in",
+        "absolute top-full mt-2 z-50 min-w-48 overflow-hidden rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-1 shadow-lg animate-fade-in",
         alignmentClasses[align],
         className
       )}
