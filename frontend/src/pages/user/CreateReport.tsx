@@ -1,16 +1,16 @@
 import { useState } from "react";
+import { Alert } from "@/components/ui/alert";
 import { useApi } from "@/context/APIContext";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { Navbar } from "@/components/custom/Navbar";
 import { MapPicker } from "@/components/custom/MapPicker";
 import { ImageUploader } from "@/components/custom/ImageUploader";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert } from "@/components/ui/alert";
 
 const ReportCreate = () => {
     const { createReport } = useApi();
@@ -47,8 +47,8 @@ const ReportCreate = () => {
             return;
         }
 
-        if (!description.trim()) {
-            setError("Description is required");
+        if (!description.trim() && description.trim().length < 10) {
+            setError("Description is required and should be at least 10 characters long");
             return;
         }
 
@@ -87,9 +87,9 @@ const ReportCreate = () => {
                     </CardHeader>
                     <CardContent className="space-y-6">
                         {error && (
-                            <Alert variant="destructive" className="animate-shake">
+                            <div className="animate-shake w-full" role="alert">
                                 {error}
-                            </Alert>
+                            </div>
                         )}
 
                         <div className="space-y-2">
