@@ -99,7 +99,7 @@ async function http(
         body: body ? JSON.stringify(body) : undefined,
     });
 
-    const json = await res.json().catch(() => null);
+    const json = await res.json();
 
     if (!res.ok) {
         throw new Error((json && (json as ApiResponse).message) || "Request failed");
