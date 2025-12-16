@@ -1,16 +1,11 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import { MobileMenu } from "./MobileMenu";
 import { useApi } from "@/context/APIContext";
 import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ModeToggle } from "@/components/theme/mode-toggle";
-import { MobileMenu } from "./MobileMenu";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Home, FileText, Users, Settings, ChevronDown, Shield } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export const Navbar = () => {
     const { user, logout } = useApi();
@@ -123,7 +118,7 @@ export const Navbar = () => {
                                                 {user?.username?.charAt(0).toUpperCase() || "U"}
                                             </AvatarFallback>
                                         </Avatar>
-                                        <span className="font-medium text-sm text-gray-700 dark:text-gray-200 max-w-[100px] truncate">
+                                        <span className="font-medium text-sm text-gray-700 dark:text-gray-200 max-w-25 truncate">
                                             {user?.username}
                                         </span>
                                         <ChevronDown className="h-4 w-4 text-gray-500 transition-transform duration-200 group-hover:rotate-180" />
