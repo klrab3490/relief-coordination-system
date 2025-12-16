@@ -117,7 +117,7 @@ export const Navbar = () => {
                         <div className="hidden md:block">
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <button className="flex items-center space-x-2 px-2 py-1 rounded-md hover:bg-gray-100/50 dark:hover:bg-gray-700/50 transition-all duration-200 group focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                    <Button variant="ghost" className="flex items-center space-x-2 px-2 py-1 rounded-md group focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                                         <Avatar className="h-8 w-8 bg-blue-600 text-white transition-all duration-200 group-hover:ring-2 group-hover:ring-blue-500">
                                             <AvatarFallback>
                                                 {user?.username?.charAt(0).toUpperCase() || "U"}
@@ -127,7 +127,7 @@ export const Navbar = () => {
                                             {user?.username}
                                         </span>
                                         <ChevronDown className="h-4 w-4 text-gray-500 transition-transform duration-200 group-hover:rotate-180" />
-                                    </button>
+                                    </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                     <div className="px-3 py-2 border-b border-gray-200 dark:border-gray-700">

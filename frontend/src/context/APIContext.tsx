@@ -28,6 +28,7 @@ export interface CreateReportData {
     category: string;
     lng: number;
     lat: number;
+    imageUrl?: string;
     [key: string]: unknown;
 }
 
@@ -110,7 +111,7 @@ async function http(
 // -----------------------------
 // Provider Component
 // -----------------------------
-export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [accessToken, setAccessToken] = useState<string>(
         localStorage.getItem("accessToken") || ""
     );
@@ -343,8 +344,10 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 };
 
 // Custom hook
-export const useApi = () => {
+const useApi = () => {
     const ctx = useContext(ApiContext);
     if (!ctx) throw new Error("useApi must be used inside ApiProvider");
     return ctx;
 };
+
+export {useApi, ApiProvider };
